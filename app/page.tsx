@@ -55,6 +55,7 @@ export default function Home() {
   const [editErrors, setEditErrors] = useState<{ concepto?: string; importe?: string }>({});
 
   const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
+  const [apiError, setApiError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchGastos();
@@ -63,10 +64,16 @@ export default function Home() {
   async function fetchGastos() {
     try {
       const res = await fetch('/api/gastos');
+      if (!res.ok) {
+        setApiError('Error al cargar los gastos');
+        return;
+      }
       const data = await res.json();
       setGastos(data);
+      setApiError(null);
     } catch (error) {
       console.error('Error fetching gastos:', error);
+      setApiError('Error al cargar los gastos');
     } finally {
       setLoading(false);
     }
@@ -88,6 +95,7 @@ export default function Home() {
     if (Object.keys(formErrors).length > 0) return;
 
     setSubmitting(true);
+    setApiError(null);
     try {
       const res = await fetch('/api/gastos', {
         method: 'POST',
@@ -99,6 +107,10 @@ export default function Home() {
           fecha,
         }),
       });
+      if (!res.ok) {
+        setApiError('Error al guardar el gasto');
+        return;
+      }
       const data = await res.json();
       setGastos(data);
       setConcepto('');
@@ -108,6 +120,7 @@ export default function Home() {
       setErrors({});
     } catch (error) {
       console.error('Error adding gasto:', error);
+      setApiError('Error al guardar el gasto');
     } finally {
       setSubmitting(false);
     }
@@ -131,6 +144,7 @@ export default function Home() {
     if (Object.keys(formErrors).length > 0) return;
 
     setSubmitting(true);
+    setApiError(null);
     try {
       const res = await fetch(`/api/gastos/${editingGasto.id}`, {
         method: 'PUT',
@@ -142,11 +156,16 @@ export default function Home() {
           fecha: editFecha,
         }),
       });
+      if (!res.ok) {
+        setApiError('Error al actualizar el gasto');
+        return;
+      }
       const data = await res.json();
       setGastos(data);
       setEditingGasto(null);
     } catch (error) {
       console.error('Error updating gasto:', error);
+      setApiError('Error al actualizar el gasto');
     } finally {
       setSubmitting(false);
     }
@@ -154,13 +173,19 @@ export default function Home() {
 
   async function handleDelete(id: number) {
     setSubmitting(true);
+    setApiError(null);
     try {
       const res = await fetch(`/api/gastos/${id}`, { method: 'DELETE' });
+      if (!res.ok) {
+        setApiError('Error al eliminar el gasto');
+        return;
+      }
       const data = await res.json();
       setGastos(data);
       setDeleteConfirm(null);
     } catch (error) {
       console.error('Error deleting gasto:', error);
+      setApiError('Error al eliminar el gasto');
     } finally {
       setSubmitting(false);
     }
@@ -212,12 +237,20 @@ export default function Home() {
       <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-sm border-b border-[var(--color-border)]">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <h1 className="text-xl md:text-2xl font-bold text-[var(--color-foreground)]">
-            Gestor de Gastos Personales
+            Gastos Personales
           </h1>
         </div>
       </header>
 
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
+        {apiError && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex justify-between items-center">
+            <span>{apiError}</span>
+            <button onClick={() => setApiError(null)} className="text-red-700 hover:text-red-900">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
         <section className="text-center py-4">
           <p className="text-sm text-[var(--color-text-muted)] mb-2">
             Registra, busca y controla tus gastos en tiempo real

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Gestor de Gastos Personales",
+  title: "Gastos Personales",
   description: "Registra, busca y controla tus gastos en tiempo real",
 };
 
