@@ -1,0 +1,13 @@
+{
+  "primaryColor": "#F5F6FA",
+  "secondaryColor": "#F8F9FA",
+  "backgroundColor": "#F5F6FA",
+  "textColor": "#2C3E50",
+  "accentColor": "#27AE60",
+  "fontHeading": "Inter",
+  "fontBody": "system-ui",
+  "borderRadius": "0.25rem",
+  "logoText": "Gestor de Gastos Personales",
+  "logoImageUrl": "https://vabacntbfcwhgkjqajcw.supabase.co/storage/v1/object/public/screenshots/projects/P-U27J7C/logo.png",
+  "tone": "professional"
+}
